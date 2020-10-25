@@ -4,7 +4,6 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
-import com.example.cartrack.databinding.ActivityLauncherBinding
 import com.example.cartrack.ui.LauncherActivity
 import com.example.cartrack.ui.MainActivity
 import com.example.cartrack.ui.SharedViewModel
@@ -24,22 +23,20 @@ class InitActivity : AppCompatActivity() {
         sharedViewModel =
             ViewModelProvider(this, viewModelFactory).get(SharedViewModel::class.java)
 
-        val logedIn = sharedViewModel.logedInOrNot()
-        if (logedIn){
-            restartApp()
-        }
-        else{
-            longToLogin()
-        }
+        if (sharedViewModel.loggedInOrNot()) restartApp() else longToLogin()
+
     }
-    fun restartApp(){
-        var intent = Intent(this, MainActivity::class.java)
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+    private fun restartApp() {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         startActivity(intent)
         finish()
     }
-    fun longToLogin(){
+
+    private fun longToLogin() {
         val intent = Intent(this, LauncherActivity::class.java)
         startActivity(intent)
     }
+
 }

@@ -3,20 +3,36 @@ package com.example.cartrack.ui
 import android.os.Bundle
 import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.example.cartrack.R
-import com.example.cartrack.SharedPref
+import com.example.cartrack.app.CartrackApplication
+import com.example.cartrack.databinding.ActivityLauncherBinding
+import javax.inject.Inject
 
 open class BaseActivity : AppCompatActivity(){
-    private lateinit var sharedPre: SharedPref
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var sharedViewModel: SharedViewModel
+
     override fun onCreate(
         savedInstanceState: Bundle?,
         persistentState: PersistableBundle?
     ) {
+
+        val appComponent = (applicationContext as CartrackApplication).appComponent
+        appComponent.inject(this)
+
         super.onCreate(savedInstanceState, persistentState)
+        val binding = ActivityLauncherBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+
+        sharedViewModel =
+            ViewModelProvider(this, viewModelFactory).get(SharedViewModel::class.java)
+
     }
     fun setDark() {
-        sharedPre = SharedPref(this)
-        if (sharedPre.loadNightModeState()){
+        if (sharedViewModel.lasdThemeMode()){
             setTheme(R.style.AppThemeDark)
         }
         else{
@@ -24,8 +40,7 @@ open class BaseActivity : AppCompatActivity(){
         }
     }
     fun setDarkAction() {
-        sharedPre = SharedPref(this)
-        if (sharedPre.loadNightModeState()){
+        if (sharedViewModel.lasdThemeMode()){
             setTheme(R.style.AppThemeDarkActionBar)
         }
         else{

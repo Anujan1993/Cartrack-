@@ -9,11 +9,12 @@ import javax.inject.Singleton
 import kotlin.reflect.KClass
 
 @Singleton
-class AppViewModelFactory @Inject constructor(private val creators: Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>) :
+class AppViewModelFactory @Inject constructor(private val creators: Map<Class<out ViewModel>,
+        @JvmSuppressWildcards Provider<ViewModel>>) :
     ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        val creator = creators[modelClass] ?: creators.entries.firstOrNull{
+        val creator = creators[modelClass] ?: creators.entries.firstOrNull {
             modelClass.isAssignableFrom(it.key)
         }?.value ?: throw IllegalArgumentException("Unknown model class: $modelClass")
 
@@ -22,6 +23,10 @@ class AppViewModelFactory @Inject constructor(private val creators: Map<Class<ou
     }
 }
 
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.PROPERTY_GETTER)
+@Target(
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.PROPERTY_SETTER,
+    AnnotationTarget.PROPERTY_GETTER
+)
 @MapKey
 annotation class ViewModelKey(val value: KClass<out ViewModel>)

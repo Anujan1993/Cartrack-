@@ -1,12 +1,10 @@
 package com.example.cartrack.repository
 
 import android.content.SharedPreferences
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.cartrack.dao.AppUserDao
 import com.example.cartrack.entity.AppUser
-import com.example.cartrack.loginSharedPrefState
-import com.example.cartrack.response.User
+import com.example.cartrack.util.loginSharedPrefState
 import com.example.cartrack.util.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -30,7 +28,14 @@ class UserRepository @Inject constructor(
         }
         return result
     }
-    suspend fun registerUser(name:String,email:String,phone:String,country:String,passwordHash: String): MutableLiveData<Result<String>> {
+
+    suspend fun registerUser(
+        name: String,
+        email: String,
+        phone: String,
+        country: String,
+        passwordHash: String
+    ): MutableLiveData<Result<String>> {
         val registerResult = MutableLiveData<Result<String>>()
         withContext(Dispatchers.IO) {
             val user = userDao.insert(AppUser(0, name, phone, country, passwordHash, email))
@@ -39,7 +44,4 @@ class UserRepository @Inject constructor(
         return registerResult
     }
 
-//    suspend fun getAlluser(): List<AppUser> {
-//        return userDao.allUserUsers
-//    }
 }

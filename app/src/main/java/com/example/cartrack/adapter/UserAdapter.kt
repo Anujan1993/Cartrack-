@@ -1,68 +1,45 @@
 package com.example.cartrack.adapter
 
-import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.cartrack.R
-import com.example.cartrack.ui.SingleUserActivity
+import com.example.cartrack.databinding.CartLayoutBinding
 import com.example.cartrack.response.User
 
+class UserAdapter(
+private val nameList: List<User>, private val userItemSelectedCallback: Callback?
+) :
+RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
 
-class UserAdapter(private val nameList: List<User>?, private val context: Context?) :
-    RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
-    private val VIEW_TYPE_LOADING = 0
-    private val VIEW_TYPE_NORMAL = 1
-    private val isLoaderVisible = false
-    override fun onBindViewHolder(holder: UserViewHolder, position: Int)
-    {
-        holder.bindData(
-            this.nameList!![position].name.toString(),
-            nameList[position].email.toString(),
-            nameList[position].company!!.name.toString()
-        )
-        holder.cartView?.setOnClickListener(View.OnClickListener {
-            val idd = this.nameList[position].id
-            val lat = this.nameList[position].address?.geo?.lat
-            val lng = this.nameList[position].address?.geo?.lng
-            val addressName = this.nameList[position].address?.street
-            val intent = Intent(context, SingleUserActivity::class.java)
-            intent.putExtra("ID", idd)
-            intent.putExtra("lat", lat )
-            intent.putExtra("lng", lng)
-            intent.putExtra("addressName", addressName)
-            context?.startActivity(intent)
-        })
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
+        val layoutInflater = LayoutInflater.from(parent.context)
 
-    override fun getItemCount(): Int
-    {
-        return nameList!!.size
-    }
-
-    class UserViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView!!)
-    {
-        var textView = itemView?.findViewById<TextView>(R.id.nameOf)
-        var date = itemView?.findViewById<TextView>(R.id.emailA)
-        var shortDec = itemView?.findViewById<TextView>(R.id.comName)
-        var cartView = itemView?.findViewById<CardView>(R.id.clickCard)
-        fun bindData(name: String, email: String, phone: String) {
-            textView?.text = name
-            date?.text =email
-            shortDec?.text =phone
+        return with(CartLayoutBinding.inflate(layoutInflater, parent, false)) {
+            UserViewHolder(this)
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
-        val view = LayoutInflater.from(parent?.context)
-            .inflate(R.layout.cart_layout, parent, false);
-
-        //return ViewHolder
-        return UserViewHolder(view)
+    override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
+        nameList[position].also {
+            holder.bindData(it)
+        }
     }
-    
+
+    override fun getItemCount(): Int {
+        return nameList.size
+    }
+
+    open inner class UserViewHolder(private val binding: CartLayoutBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bindData(user: User) {
+            binding.user = user
+            binding.clickCard.setOnClickListener {
+                userItemSelectedCallback?.onItemClicked(user)
+            }
+        }
+    }
+
+    interface Callback {
+        fun onItemClicked(user: User)
+    }
 }

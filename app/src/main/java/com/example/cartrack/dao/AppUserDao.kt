@@ -6,14 +6,8 @@ import com.example.cartrack.entity.AppUser
 @Dao
 interface AppUserDao {
 
-    @Query("SELECT * FROM user WHERE username = :id LIMIT 1")
-    suspend fun findDirectorById(id: String): AppUser?
-
-    @Query("SELECT * FROM user WHERE username = :fullName LIMIT 1")
-    suspend fun findDirectorByName(fullName: String?): AppUser?
-
     @Query("SELECT * FROM user WHERE email = :email AND password = :password LIMIT 1")
-    abstract fun findByUserNameAndPassword(email: String, password: String): AppUser?
+    fun findByUserNameAndPassword(email: String, password: String): AppUser?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(users_AppUser: AppUser): Long
@@ -24,6 +18,4 @@ interface AppUserDao {
     @Query("DELETE FROM user")
     suspend fun deleteAll()
 
-    @get:Query("SELECT * FROM user ORDER BY username ASC")
-    val allUserUsers: List<AppUser>
 }

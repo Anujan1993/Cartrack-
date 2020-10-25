@@ -1,20 +1,15 @@
 package com.example.cartrack.ui
 
 import android.content.Intent
-import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import androidx.lifecycle.ViewModelProvider
 import com.example.cartrack.R
-import com.example.cartrack.SharedPref
 import com.example.cartrack.app.CartrackApplication
 import com.example.cartrack.databinding.ActivityLauncherBinding
-import com.example.cartrack.databinding.ActivityLoginBinding
-import com.example.cartrack.loadLoginSharedPrefState
 import com.example.cartrack.login.LoginActivity
-import com.example.cartrack.login.LoginViewModel
 import com.example.cartrack.register.RegisterActivity
 import javax.inject.Inject
 
@@ -23,8 +18,8 @@ class LauncherActivity : AppCompatActivity()   ,View.OnClickListener {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var sharedViewModel: SharedViewModel
 
-    private var register: Button? = null
-    private var login: Button? = null
+    private lateinit var register: Button
+    private lateinit var login: Button
     override fun onCreate(savedInstanceState: Bundle?) {
 
         val appComponent = (applicationContext as CartrackApplication).appComponent
@@ -44,12 +39,9 @@ class LauncherActivity : AppCompatActivity()   ,View.OnClickListener {
         register = findViewById(R.id.update)
         login = findViewById(R.id.SendEmail)
 
-        register!!.setOnClickListener(this)
-        login!!.setOnClickListener(this)
-        val logedIn = sharedViewModel.logedInOrNot()
-        if (logedIn){
-            navigateToHome()
-        }
+        register.setOnClickListener(this)
+        login.setOnClickListener(this)
+        if (sharedViewModel.loggedInOrNot())navigateToHome()
     }
 
     override fun onClick(p0: View?) {
@@ -66,7 +58,9 @@ class LauncherActivity : AppCompatActivity()   ,View.OnClickListener {
         }
     }
     private fun navigateToHome() {
-        startActivity(Intent(this, MainActivity::class.java))
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+        startActivity(intent)
         finish()
     }
 }

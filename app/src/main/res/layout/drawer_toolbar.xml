@@ -13,7 +13,8 @@
         android:background="?attr/toolbarColor"
         android:id="@+id/toolbar"
         tools:ignore="MissingConstraints"
-        app:title="List of All Posts">
+        app:title="List of All Posts"
+        app:titleTextColor="@color/primaryTextColor">
 
     </androidx.appcompat.widget.Toolbar>
 

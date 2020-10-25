@@ -1,6 +1,7 @@
 package com.example.cartrack.di
 
 import com.example.cartrack.api.ApiInterface
+import com.example.cartrack.util.EndPoints
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
@@ -33,7 +34,7 @@ class NetworkModule {
 
         return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create(gson))
-            .baseUrl("https://jsonplaceholder.typicode.com/") //TODO: Create constant class
+            .baseUrl(EndPoints.BASE_URL)
             .client(httpClient)
             .build()
     }

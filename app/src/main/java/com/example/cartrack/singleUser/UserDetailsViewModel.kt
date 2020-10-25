@@ -3,6 +3,7 @@ package com.example.cartrack.singleUser
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import com.example.cartrack.repository.NetworkUserRepository
+import com.example.cartrack.util.ErrorMessages
 import com.example.cartrack.util.Resource
 import com.example.cartrack.util.TextObservable
 import kotlinx.coroutines.Dispatchers
@@ -15,7 +16,7 @@ class UserDetailsViewModel @Inject constructor(private  val networkUserRepositor
         try {
             emit(Resource.success(data = networkUserRepository.getSingleUsers(userID)))
         } catch (exception: Exception) {
-            emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
+            emit(Resource.error(data = null, message = exception.message ?: ErrorMessages.SERVER_ERROR))
         }
     }
     val nameObservable = TextObservable()

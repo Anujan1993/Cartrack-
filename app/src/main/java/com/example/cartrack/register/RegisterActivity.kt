@@ -9,10 +9,12 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.cartrack.R
 import com.example.cartrack.app.CartrackApplication
-import com.example.cartrack.databinding.ActivityLoginBinding
 import com.example.cartrack.databinding.ActivityRegisterBinding
 import com.example.cartrack.login.LoginActivity
 import com.example.cartrack.ui.MainActivity
+import com.example.cartrack.util.AppConstant
+import com.example.cartrack.util.ErrorMessages
+import com.example.cartrack.util.ErrorObject
 import com.example.cartrack.util.Result
 import javax.inject.Inject
 
@@ -22,15 +24,19 @@ class RegisterActivity : AppCompatActivity(),
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var registerViewModel: RegisterViewModel
 
-    private var country: String? = null
-    private var spinner: Spinner? = null
+    private lateinit var country: String
+    private lateinit var spinner: Spinner
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         val appComponent = (applicationContext as CartrackApplication).appComponent
         appComponent.inject(this)
+
         super.onCreate(savedInstanceState)
+
         val binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         spinner = findViewById(R.id.Up_Post_AddressMain)
 
         ArrayAdapter.createFromResource(
@@ -53,16 +59,14 @@ class RegisterActivity : AppCompatActivity(),
         binding.conformPasswordObservable = registerViewModel.conformPasswordObservable
 
         errorObserveViewModel(binding)
-        spinner?.onItemSelectedListener = this
+        spinner.onItemSelectedListener = this
 
         observeViewModel()
 
-        val logedIn = registerViewModel.logedInOrNot()
-        if (logedIn){
-            navigateToHome()
-        }
+        if (registerViewModel.loggedInOrNot()) navigateToHome()
 
     }
+
     private fun observeViewModel() {
         registerViewModel.result.observe(this, Observer {
             it?.let {
@@ -79,40 +83,42 @@ class RegisterActivity : AppCompatActivity(),
             }
         })
     }
-    private fun errorObserveViewModel(binding: ActivityRegisterBinding){
+
+    private fun errorObserveViewModel(binding: ActivityRegisterBinding) {
         registerViewModel.error.observe(this, Observer {
             it.let {
                 when (it) {
-                    "email" -> {
-                        binding.UpEmailMain.error = "Please Enter the Email"
+                    ErrorObject.EMAIL_OBJECT-> {
+                        binding.UpEmailMain.error = ErrorMessages.EMAIL_ERROR
                         binding.UpEmailMain.requestFocus()
                     }
-                    "name" -> {
-                        binding.UpUname.error = "Please Enter the Email"
+                    ErrorObject.NAME_OBJECT -> {
+                        binding.UpUname.error = ErrorMessages.NAME_ERROR
                         binding.UpUname.requestFocus()
                     }
-                    "phone" -> {
-                        binding.UpPhoneNumberMain.error = "Please Enter the Phone Number"
+                    ErrorObject.PHONE_OBJECT -> {
+                        binding.UpPhoneNumberMain.error = ErrorMessages.PHONE_ERROR
                         binding.UpPhoneNumberMain.requestFocus()
                     }
-                    "Conform" -> {
-                        binding.UpConfomPasswordMain.error = "Please Enter the Conform Password"
+                    ErrorObject.CONFORM_PASSWORD_OBJECT -> {
+                        binding.UpConfomPasswordMain.error = ErrorMessages.CONFORM_PASSWORD_ERROR
                         binding.UpConfomPasswordMain.requestFocus()
                     }
-                    "password" -> {
-                        binding.UpPasswordMain.error = "Please Enter the Password"
+                    ErrorObject.PASSWORD_OBJECT -> {
+                        binding.UpPasswordMain.error = ErrorMessages.PASSWORD_ERROR
                         binding.UpPasswordMain.requestFocus()
                     }
                     else -> {
-                        binding.UpConfomPasswordMain.error = "Passwords are not matched"
+                        binding.UpConfomPasswordMain.error = ErrorMessages.PASSWORD_NOT_MATCHED
                         binding.UpConfomPasswordMain.requestFocus()
                     }
                 }
             }
         })
     }
-    private fun navigateToLogin(it:Result<String>) {
-        Toast.makeText(this, "Registration Success", Toast.LENGTH_LONG).show()
+
+    private fun navigateToLogin(it: Result<String>) {
+        Toast.makeText(this, AppConstant.REGISTER_SUCCESS, Toast.LENGTH_LONG).show()
         startActivity(Intent(this, LoginActivity::class.java))
         finish()
     }
@@ -124,9 +130,9 @@ class RegisterActivity : AppCompatActivity(),
     override fun onItemSelected(parent: AdapterView<*>?, p1: View?, pos: Int, p3: Long) {
         // An item was selected. You can retrieve the selected item using
         country = parent?.getItemAtPosition(pos).toString()
-//        Toast.makeText(this,country,Toast.LENGTH_SHORT).show()
         registerViewModel.getCountry(country!!)
     }
+
     private fun navigateToHome() {
         startActivity(Intent(this, MainActivity::class.java))
         finish()
