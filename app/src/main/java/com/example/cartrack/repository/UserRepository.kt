@@ -38,8 +38,13 @@ class UserRepository @Inject constructor(
     ): MutableLiveData<Result<String>> {
         val registerResult = MutableLiveData<Result<String>>()
         withContext(Dispatchers.IO) {
-            val user = userDao.insert(AppUser(0, name, phone, country, passwordHash, email))
-            registerResult.postValue(Result.Success("Registration Success"))
+            try {
+                userDao.insert(AppUser(0, name, phone, country, passwordHash, email))
+                registerResult.postValue(Result.Success("Registration Success"))
+            }
+            catch (exception : Exception){
+                registerResult.postValue(Result.Error(Exception("email id already exist!")))
+            }
         }
         return registerResult
     }
