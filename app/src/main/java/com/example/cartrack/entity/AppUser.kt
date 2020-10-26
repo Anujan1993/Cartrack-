@@ -4,7 +4,7 @@ import androidx.room.*
 
 @Entity(
     tableName = "user",
-    indices = [Index(value = ["id", "email"], unique = true)])
+    indices = [Index(value = ["email"], unique = true)])
 data class AppUser(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
