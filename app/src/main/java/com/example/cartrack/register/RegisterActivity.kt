@@ -73,12 +73,10 @@ class RegisterActivity : AppCompatActivity(),
                 when (it) {
                     is Result.Success -> navigateToLogin(it)
 
-                    is Result.Loading -> {
-
-                    }
                     is Result.Error -> {
                         Toast.makeText(this, it.exception.message, Toast.LENGTH_LONG).show()
                     }
+                    Result.Loading -> TODO()
                 }
             }
         })
